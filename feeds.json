@@ -1,0 +1,41 @@
+{
+  "_note": "見回る自動投稿の一覧。アカウントや媒体が増えたら1行足す。posted=投稿済みの記録、planned=予定(承認済み)。date が ISO 時刻のものは iso:true(日本時間の日付に直して比べる)。",
+  "owner": "empowerartlab-art",
+  "feeds": [
+    { "brand": "ハーレー", "media": "Threads", "time": "5:00", "repo": "threads-harley-solo", "workflow": "daily-post.yml",
+      "posted": { "path": "data/threads-posts.json", "list": "posts", "date": "postedAt", "iso": true },
+      "planned": { "path": "data/draft-bank.json", "list": "items", "date": "targetDate" } },
+    { "brand": "ハーレー", "media": "X", "time": "5:23", "repo": "threads-harley-solo", "workflow": "x-post.yml",
+      "posted": { "path": "data/x-posts.json", "date": "date" },
+      "planned": { "path": "data/x-queue.json", "date": "date", "approved": "approved" } },
+    { "brand": "ロストボール", "media": "Threads", "time": "5:00", "repo": "threads-lostball-empowerartlab", "workflow": "daily-live-post.yml",
+      "posted": { "path": "data/threads-posts.json", "list": "posts", "date": "postedAt", "iso": true },
+      "planned": { "path": "data/draft-bank.json", "list": "items", "date": "targetDate" } },
+    { "brand": "ロストボール", "media": "X", "time": "5:53", "repo": "threads-lostball-empowerartlab", "workflow": "x-post.yml",
+      "posted": { "path": "data/x-posts.json", "date": "date" },
+      "planned": { "path": "data/x-queue.json", "date": "date", "approved": "approved" } },
+    { "brand": "ロストボール", "media": "Instagram", "time": "7:00", "repo": "threads-lostball-empowerartlab", "workflow": "ig-post.yml",
+      "posted": { "path": "data/ig-posts.json", "date": "date" },
+      "planned": { "path": "data/ig-queue.json", "date": "date", "approved": "approved" } },
+    { "brand": "ZERO RIDERS", "media": "Threads", "time": "6:00", "repo": "threads-zero-riders", "workflow": "daily-post.yml",
+      "posted": { "path": "data/threads-posts.json", "date": "date" },
+      "planned": { "path": "data/draft-bank.json", "date": "date", "approved": "approved" } },
+    { "brand": "ZERO RIDERS", "media": "X", "time": "6:23", "repo": "threads-zero-riders", "workflow": "x-post.yml",
+      "posted": { "path": "data/x-posts.json", "date": "date" },
+      "planned": { "path": "data/x-queue.json", "date": "date", "approved": "approved" } },
+    { "brand": "ZERO RIDERS", "media": "Instagram", "time": "7:00", "repo": "threads-zero-riders", "workflow": "ig-post.yml",
+      "posted": { "path": "data/ig-posts.json", "date": "date" },
+      "planned": { "path": "data/ig-queue.json", "date": "date", "approved": "approved" } },
+    { "brand": "エンパワー", "media": "Threads", "time": "5:00", "repo": "threads-automation-empower", "workflow": "threads-daily-post.yml",
+      "posted": { "path": "data/threads-posts.json", "list": "posts", "date": "postedAt", "iso": true },
+      "planned": { "path": "data/draft-bank.json", "list": "items", "date": "targetDate" } },
+    { "brand": "エンパワー", "media": "X", "time": "6:43", "repo": "threads-automation-empower", "workflow": "x-post.yml",
+      "posted": { "path": "data/x-posts.json", "date": "date" },
+      "planned": { "path": "data/x-queue.json", "date": "date", "approved": "approved" } }
+  ],
+  "tokens": [
+    { "label": "ロストボール Instagram", "repo": "threads-lostball-empowerartlab", "path": "data/ig-account.json", "field": "igTokenExpiresAt" },
+    { "label": "ZERO RIDERS Threads", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
+    { "label": "ZERO RIDERS Instagram", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "igTokenExpiresAt" }
+  ]
+}

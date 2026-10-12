@@ -1,0 +1,32 @@
+name: 朝のまとめ (07:30 JST)
+
+# 全アカウント・全媒体の「今日の投稿」と要対応を、毎朝 LINE に1通。読むだけで、投稿や変更は一切しない。
+on:
+  schedule:
+    - cron: "30 22 * * *" # 22:30 UTC = 07:30 JST
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: "YYYY-MM-DD(その日のまとめを作る。空なら今日)"
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: まとめを作って LINE に送る
+        env:
+          GH_READ_TOKEN: ${{ secrets.GH_READ_TOKEN }}
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_TO: ${{ secrets.LINE_TO }}
+          TARGET_DATE: ${{ inputs.target_date }}
+        run: node scripts/digest.mjs

@@ -1,0 +1,32 @@
+name: 失敗の見回り (毎時)
+
+# 5:45〜23:45 JST の毎時、前回以降に失敗した実行があれば LINE で1通。無ければ何も送らない。読むだけ。
+on:
+  schedule:
+    - cron: "45 20-23,0-14 * * *" # UTC。JST では 5:45〜23:45 の毎時
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: 失敗を探して、あれば LINE に送る
+        env:
+          GH_READ_TOKEN: ${{ secrets.GH_READ_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_TO: ${{ secrets.LINE_TO }}
+        run: node scripts/watch.mjs
