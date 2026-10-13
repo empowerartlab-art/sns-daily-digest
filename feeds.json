@@ -1,5 +1,5 @@
 {
-  "_note": "見回る自動投稿の一覧。アカウントや媒体が増えたら1行足す。posted=投稿済みの記録、planned=予定(承認済み)。date が ISO 時刻のものは iso:true(日本時間の日付に直して比べる)。",
+  "_note": "見回る自動投稿の一覧。kakeai=キャラ投稿が出たら公式からのコメント案をLINEで知らせる予定(各リポジトリの kakeai.json)。アカウントや媒体が増えたら1行足す。posted=投稿済みの記録、planned=予定(承認済み)。date が ISO 時刻のものは iso:true(日本時間の日付に直して比べる)。",
   "owner": "empowerartlab-art",
   "feeds": [
     { "brand": "ハーレー", "media": "Threads", "time": "5:00", "repo": "threads-harley-solo", "workflow": "daily-post.yml",
@@ -31,11 +31,29 @@
       "planned": { "path": "data/draft-bank.json", "list": "items", "date": "targetDate" } },
     { "brand": "エンパワー", "media": "X", "time": "6:43", "repo": "threads-automation-empower", "workflow": "x-post.yml",
       "posted": { "path": "data/x-posts.json", "date": "date" },
-      "planned": { "path": "data/x-queue.json", "date": "date", "approved": "approved" } }
+      "planned": { "path": "data/x-queue.json", "date": "date", "approved": "approved" } },
+    { "brand": "ヘタ郎", "media": "Threads", "time": "5:37", "repo": "threads-hetaro", "workflow": "daily-post.yml",
+      "posted": { "path": "data/threads-posts.json", "date": "date" },
+      "planned": { "path": "data/draft-bank.json", "date": "date", "approved": "approved" } },
+    { "brand": "ヘタ郎", "media": "X", "time": "6:13", "repo": "threads-hetaro", "workflow": "x-post.yml",
+      "posted": { "path": "data/x-posts.json", "date": "date" },
+      "planned": { "path": "data/x-queue.json", "date": "date", "approved": "approved" } },
+    { "brand": "ヘタ郎", "media": "Instagram", "time": "6:37", "repo": "threads-hetaro", "workflow": "ig-post.yml",
+      "posted": { "path": "data/ig-posts.json", "date": "date" },
+      "planned": { "path": "data/ig-queue.json", "date": "date", "approved": "approved" } }
   ],
   "tokens": [
     { "label": "ロストボール Instagram", "repo": "threads-lostball-empowerartlab", "path": "data/ig-account.json", "field": "igTokenExpiresAt" },
     { "label": "ZERO RIDERS Threads", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
-    { "label": "ZERO RIDERS Instagram", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "igTokenExpiresAt" }
+    { "label": "ZERO RIDERS Instagram", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "igTokenExpiresAt" },
+    { "label": "ヘタ郎 Threads", "repo": "threads-hetaro", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
+    { "label": "ヘタ郎 Instagram", "repo": "threads-hetaro", "path": "data/token-meta.json", "field": "igTokenExpiresAt" }
+  ],
+  "kakeai": [
+    { "brand": "ヘタ郎", "repo": "threads-hetaro", "path": "data/kakeai.json",
+      "media": {
+        "Threads": { "posted": "data/threads-posts.json", "link": "https://www.threads.com/@hetarou.golf2026" },
+        "X": { "posted": "data/x-posts.json", "postLink": "https://x.com/Hetarougolf/status/{xId}", "link": "https://x.com/Hetarougolf" },
+        "Instagram": { "posted": "data/ig-posts.json", "link": "https://www.instagram.com/hetarou.golf2026/" } } }
   ]
 }

@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { githubClient } from '../lib/github.mjs';
 import { feedStatus, buildDigest, jstDate } from '../lib/digest.mjs';
 import { pushLine } from '../lib/line.mjs';
+import { postLink, kakeaiDigestLines } from '../lib/kakeai.mjs';
 
 const cfg = JSON.parse(await readFile(new URL('../feeds.json', import.meta.url), 'utf8'));
 const gh = githubClient({ token: process.env.GH_READ_TOKEN });
@@ -44,6 +45,21 @@ for (const t of cfg.tokens) {
   }
 }
 
-const text = buildDigest({ today, rows, failures, tokens });
+// 今日の掛け合い（予定と、投稿が出ていればそのリンク）。読めなくてもまとめは送る。
+const kakeai = [];
+for (const source of cfg.kakeai ?? []) {
+  try {
+    for (const e of await read(source.repo, source.path)) {
+      const m = source.media?.[e.media];
+      if (e.date !== today || !m) continue;
+      const record = (await read(source.repo, m.posted)).find((p) => p.date === today && p.publishedAt);
+      kakeai.push({ ...e, brand: source.brand, posted: Boolean(record), url: record ? postLink(m, record) : '' });
+    }
+  } catch {
+    // 読めなくてもまとめは送る
+  }
+}
+
+const text = buildDigest({ today, rows, failures, tokens }) + kakeaiDigestLines(kakeai).map((l) => `\n${l}`).join('');
 await pushLine({ text, token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO });
 console.log(`digest ${today}: ${rows.length} feeds, ${failures.length} failures`);
