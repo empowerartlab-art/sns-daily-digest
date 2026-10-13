@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { dueKakeai, buildKakeaiMessage, kakeaiDigestLines, postLink } from '../lib/kakeai.mjs';
+import { dueKakeai, buildKakeaiMessage, kakeaiDigestLines, postLink, dueReplies, buildReplyMessage } from '../lib/kakeai.mjs';
 
 const source = {
   brand: 'ヘタ郎',
@@ -40,12 +40,20 @@ test('X の記録に xId が無ければプロフィールのリンク', () => {
   assert.equal(postLink(source.media.Threads, { threadsId: '1' }), 'https://www.threads.com/@hetarou.golf2026');
 });
 
-test('LINE の文面にリンク・アカウント・コメント案が入る', () => {
-  const text = buildKakeaiMessage({ brand: 'ヘタ郎', media: 'Threads', date: '2026-10-14', url: 'https://u', from: 'ロストボールのThreads', text: 'よろしく' });
-  assert.match(text, /【掛け合い】ヘタ郎のThreadsが投稿されました（10\/14）/);
-  assert.match(text, /https:\/\/u/);
-  assert.match(text, /ロストボールのThreads/);
-  assert.match(text, /よろしく/);
+test('LINE の文面: ①だれが・だれに・なにを、返し案があれば②も', () => {
+  const base = { brand: 'ヘタ郎', media: 'Threads', date: '2026-10-14', url: 'https://u', from: 'ロストボールのThreads（@lost）', text: 'よろしく' };
+  const one = buildKakeaiMessage(base);
+  assert.match(one, /【掛け合い】ヘタ郎のThreadsが投稿されました（10\/14）/);
+  assert.match(one, /投稿：https:\/\/u/);
+  assert.match(one, /だれが：ロストボールのThreads（@lost）/);
+  assert.match(one, /だれに：ヘタ郎の今日の投稿に/);
+  assert.match(one, /よろしく/);
+  assert.doesNotMatch(one, /②/);
+  const two = buildKakeaiMessage({ ...base, replyFrom: 'ヘタ郎のThreads（@h）', replyText: 'がまだすばい' });
+  assert.match(two, /② 昼ごろ/);
+  assert.match(two, /だれが：ヘタ郎のThreads（@h）/);
+  assert.match(two, /だれに：①のロストボールのThreadsのコメントに、返信として/);
+  assert.match(two, /がまだすばい/);
 });
 
 test('朝のまとめの「今日の掛け合い」', () => {
@@ -61,4 +69,20 @@ test('feeds.json の kakeai 設定が読める形になっている', () => {
     assert.ok(k.repo && k.path && k.brand);
     for (const m of Object.values(k.media)) assert.ok(m.posted && m.link);
   }
+});
+
+test('昼の「②の時間です」: 今日投稿済みで返し案があるものだけ', () => {
+  const withReply = [
+    { date: '2026-10-14', media: 'Threads', from: 'ロストボールのThreads（@l）', text: 'よろしく', replyFrom: 'ヘタ郎のThreads（@h）', replyText: 'がまだすばい' },
+    { date: '2026-10-14', media: 'X', from: 'ロストボールのX', text: '池へ' },
+  ];
+  const postedByMedia = { Threads: [{ date: '2026-10-14', publishedAt: '2026-10-13T20:38:00Z' }], X: [{ date: '2026-10-14', xId: '9', publishedAt: '2026-10-13T21:14:00Z' }] };
+  const due = dueReplies({ source, entries: withReply, postedByMedia, today: '2026-10-14' });
+  assert.deepEqual(due.map((d) => d.media), ['Threads']);
+  assert.equal(dueReplies({ source, entries: withReply, postedByMedia, today: '2026-10-15' }).length, 0);
+  const text = buildReplyMessage(due[0]);
+  assert.match(text, /【掛け合い②の時間です】/);
+  assert.match(text, /だれが：ヘタ郎のThreads（@h）/);
+  assert.match(text, /だれに：ロストボールのThreadsのコメントに、返信として/);
+  assert.match(text, /がまだすばい/);
 });

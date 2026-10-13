@@ -4,7 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { githubClient } from '../lib/github.mjs';
 import { buildFailureAlert } from '../lib/digest.mjs';
 import { pushLine } from '../lib/line.mjs';
-import { dueKakeai, buildKakeaiMessage } from '../lib/kakeai.mjs';
+import { dueKakeai, buildKakeaiMessage, dueReplies, buildReplyMessage } from '../lib/kakeai.mjs';
+import { jstDate } from '../lib/digest.mjs';
 
 const cfg = JSON.parse(await readFile(new URL('../feeds.json', import.meta.url), 'utf8'));
 const gh = githubClient({ token: process.env.GH_READ_TOKEN });
@@ -39,7 +40,11 @@ for (const source of cfg.kakeai ?? []) {
     for (const [media, m] of Object.entries(source.media)) postedByMedia[media] = await gh.readJson(cfg.owner, source.repo, m.posted, []);
     const due = dueKakeai({ source, entries, postedByMedia, since, now });
     for (const item of due) await pushLine({ text: buildKakeaiMessage(item), token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO });
-    console.log(`kakeai ${source.brand}: ${due.length} reminders`);
+    // 12時台（12:45 の見回り）だけ、②（キャラからの返し）の時間を知らせる。
+    const jstHour = new Date(Date.now() + 9 * 3600 * 1000).getUTCHours();
+    const replies = jstHour === 12 ? dueReplies({ source, entries, postedByMedia, today: jstDate() }) : [];
+    for (const item of replies) await pushLine({ text: buildReplyMessage(item), token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO });
+    console.log(`kakeai ${source.brand}: ${due.length} reminders, ${replies.length} reply reminders`);
   } catch (err) {
     console.log(`kakeai ${source.brand}: 読めませんでした（${err.message}）`);
   }
