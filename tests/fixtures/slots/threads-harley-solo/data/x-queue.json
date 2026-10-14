@@ -1,0 +1,9 @@
+[
+  { "id": "hx-1019", "date": "2026-10-19", "text": "テスト", "approved": true },
+  { "id": "hx-1021-m", "date": "2026-10-21", "slot": "morning", "text": "テスト", "approved": true },
+  { "id": "hx-1021-n", "date": "2026-10-21", "slot": "noon", "text": "テスト", "approved": true },
+  { "id": "hx-1021-e", "date": "2026-10-21", "slot": "night", "text": "テスト", "approved": true },
+  { "id": "hx-1022-m", "date": "2026-10-22", "slot": "morning", "text": "テスト", "approved": true },
+  { "id": "hx-1022-n", "date": "2026-10-22", "slot": "noon", "text": "テスト", "approved": true },
+  { "id": "hx-1022-e", "date": "2026-10-22", "slot": "night", "text": "テスト", "approved": false }
+]

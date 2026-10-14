@@ -1,0 +1,9 @@
+{ "items": [
+  { "targetDate": "2026-10-19", "body": "テスト" },
+  { "targetDate": "2026-10-21", "slot": "morning", "body": "テスト" },
+  { "targetDate": "2026-10-21", "slot": "noon", "body": "テスト" },
+  { "targetDate": "2026-10-21", "slot": "night", "body": "テスト" },
+  { "targetDate": "2026-10-22", "slot": "morning", "body": "テスト" },
+  { "targetDate": "2026-10-22", "slot": "noon", "body": "テスト" },
+  { "targetDate": "2026-10-22", "slot": "night", "body": "テスト" }
+] }

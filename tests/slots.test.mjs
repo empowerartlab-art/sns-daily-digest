@@ -33,7 +33,8 @@ test('feeds.json: ハーレー・ZERO RIDERS・ヘタ郎の Threads は 3枠、�
   }
   for (const f of cfg.feeds.filter((x) => x.slots)) assert.match(f.time, /^\d{1,2}:\d{2}$/, 'legacy の時刻は残す');
   assert.equal(graceOf(harley, cfg), 30);
-  assert.equal(cfg.feeds.filter((x) => x.slots).length, 4, 'ほかの媒体は1日1本のまま（Threads 3アカウント＋ロストボール）');
+  assert.equal(cfg.feeds.filter((x) => x.slots).length, 10, '枠は Threads 5アカウント＋X 5アカウント。Instagram は1日1本のまま');
+  assert.deepEqual(cfg.feeds.filter((x) => !x.slots).map((x) => x.media), ['Instagram', 'Instagram', 'Instagram']);
 });
 
 test('朝 7:30: ハーレーは 1/3、ZERO RIDERS・ヘタ郎は 0/3 でも正常（まだ時刻+猶予前）', () => {
@@ -196,22 +197,26 @@ test('scripts/digest.mjs を手元の fixtures で dry-run（LINE には送ら�
   assert.match(out, /■ZERO RIDERS\n✅ Threads 6:00 投稿済み/);
   assert.match(out, /■ヘタ郎\n✅ Threads 3本（7:45・12:45・20:45） 承認済み 3\/3・0\/3 投稿済み/);
   assert.match(out, /【今日の掛け合い】\n・ ヘタ郎 Threads（投稿待ち）/);
+  assert.match(out, /■ハーレー\n.*\n✅ X 3本（6:50・11:50・19:50） 承認済み 3\/3・1\/3 投稿済み/);
+  assert.match(out, /■エンパワー\n✅ Threads 3本（7:55・12:55・20:55） 承認済み 3\/3・0\/3 投稿済み/);
   assert.equal(jstDate(new Date('2026-10-20T22:30:00Z')), '2026-10-21');
 });
 
-test('scripts/watch.mjs を fixtures で dry-run: 12:45 は昼だけ、19:45 は何も、20:45 はハーレー夜だけ', () => {
+test('scripts/watch.mjs を fixtures で dry-run: 12:45 は昼だけ、19:45 は何も、20:45 はハーレー夜だけ（Threads と X）', () => {
   const run = (since, now) =>
     execFileSync(process.execPath, [fileURLToPath(new URL('../scripts/watch.mjs', import.meta.url))], { env: { ...cleanEnv(), SINCE: since, NOW: now }, encoding: 'utf8' });
   const noon = run('2026-10-21T11:45:00+09:00', '2026-10-21T12:45:00+09:00');
-  assert.match(noon, /1 missed slots/);
+  assert.match(noon, /2 missed slots/);
   assert.match(noon, /ハーレー Threads：10\/21 昼 12:05 の分/);
+  assert.match(noon, /ハーレー X：10\/21 昼 11:50 の分/, 'X 11:50 + 30分 = 12:20');
   assert.doesNotMatch(noon, /夜/);
   const early = run('2026-10-21T18:45:00+09:00', '2026-10-21T19:45:00+09:00');
   assert.match(early, /0 failures, 0 missed slots/);
   assert.doesNotMatch(early, /dry-run/);
   const night = run('2026-10-21T19:45:00+09:00', '2026-10-21T20:45:00+09:00');
-  assert.match(night, /1 missed slots/);
+  assert.match(night, /2 missed slots/);
   assert.match(night, /ハーレー Threads：10\/21 夜 20:05 の分/);
+  assert.match(night, /ハーレー X：10\/21 夜 19:50 の分/);
   assert.doesNotMatch(night, /ヘタ郎 Threads/, 'ヘタ郎の夜(20:45 + 30分)はまだ');
 });
 
