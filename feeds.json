@@ -1,5 +1,5 @@
 {
-  "_note": "見回る自動投稿の一覧。kakeai=キャラ投稿が出たら公式からのコメント案をLINEで知らせる予定(各リポジトリの kakeai.json)。アカウントや媒体が増えたら1行足す。posted=投稿済みの記録、planned=予定(承認済み)。date が ISO 時刻のものは iso:true(日本時間の日付に直して比べる)。dayField=記録にその項目があれば日本時間の日付としてそのまま使う。slots=1日に複数本投稿する媒体の枠と時刻(JST)。slot を持つ予定・記録はその枠、slot が無いものは従来の1日1本で time の時刻。slotsFrom 以降で予定の無い日は枠の表示。graceMinutes=枠の時刻からこの分を過ぎても記録が無ければ「出ていない」。",
+  "_note": "見回る自動投稿の一覧。kakeai=キャラ投稿が出たら公式からのコメント案をLINEで知らせる予定(各リポジトリの kakeai.json)。アカウントや媒体が増えたら1行足す。posted=投稿済みの記録、planned=予定(承認済み)。date が ISO 時刻のものは iso:true(日本時間の日付に直して比べる)。dayField=記録にその項目があれば日本時間の日付としてそのまま使う。slots=1日に複数本投稿する媒体の枠と時刻(JST)。slot を持つ予定・記録はその枠、slot が無いものは従来の1日1本で time の時刻。slotsFrom 以降で予定の無い日は枠の表示。枠の lang=予定・記録の lang も一致するものだけその枠(同じ夜に日本語と英語がある媒体用)、label=表示名(例: 英語)。graceMinutes=枠の時刻からこの分を過ぎても記録が無ければ「出ていない」。",
   "graceMinutes": 30,
   "owner": "empowerartlab-art",
   "feeds": [
@@ -11,7 +11,8 @@
       "posted": { "path": "data/x-posts.json", "date": "date" },
       "planned": { "path": "data/x-queue.json", "date": "date", "approved": "approved" } },
     { "brand": "ロストボール", "media": "Threads", "time": "5:00", "repo": "threads-lostball-empowerartlab", "workflow": "daily-live-post.yml",
-      "posted": { "path": "data/threads-posts.json", "list": "posts", "date": "postedAt", "iso": true },
+      "slotsFrom": "2026-10-20", "slots": [{ "slot": "morning", "lang": "ja", "time": "7:35" }, { "slot": "noon", "lang": "ja", "time": "12:35" }, { "slot": "night", "lang": "ja", "time": "20:35" }, { "slot": "night", "lang": "en", "label": "英語", "time": "21:00" }],
+      "posted": { "path": "data/threads-posts.json", "list": "posts", "date": "postedAt", "iso": true, "dayField": "targetDate" },
       "planned": { "path": "data/draft-bank.json", "list": "items", "date": "targetDate" } },
     { "brand": "ロストボール", "media": "X", "time": "5:53", "repo": "threads-lostball-empowerartlab", "workflow": "x-post.yml",
       "posted": { "path": "data/x-posts.json", "date": "date" },

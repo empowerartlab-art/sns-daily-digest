@@ -1,0 +1,9 @@
+{
+  "items": [
+    { "id": "lb-1019", "targetDate": "2026-10-19" },
+    { "id": "lb-1021-m", "targetDate": "2026-10-21", "slot": "morning", "lang": "ja" },
+    { "id": "lb-1021-n", "targetDate": "2026-10-21", "slot": "noon", "lang": "ja" },
+    { "id": "lb-1021-nj", "targetDate": "2026-10-21", "slot": "night", "lang": "ja" },
+    { "id": "lb-1021-ne", "targetDate": "2026-10-21", "slot": "night", "lang": "en" }
+  ]
+}

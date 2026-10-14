@@ -1,0 +1,6 @@
+{
+  "posts": [
+    { "sourceItemId": "lb-1019", "postedAt": "2026-10-18T20:05:00.000Z", "lang": "ja" },
+    { "sourceItemId": "lb-1021-m", "postedAt": "2026-10-20T22:37:00.000Z", "lang": "ja", "slot": "morning", "targetDate": "2026-10-21" }
+  ]
+}

@@ -14,24 +14,26 @@ const feedOf = (brand) => cfg.feeds.find((f) => f.brand === brand && f.media ===
 const harley = feedOf('ハーレー');
 const zero = feedOf('ZERO RIDERS');
 const hetaro = feedOf('ヘタ郎');
+const lostball = feedOf('ロストボール');
 const fx = (repo, path) => JSON.parse(readFileSync(`${FIX}/${repo}/${path}`, 'utf8'));
 const H = { posted: fx('threads-harley-solo', 'data/threads-posts.json'), planned: fx('threads-harley-solo', 'data/draft-bank.json') };
 const Z = { posted: fx('threads-zero-riders', 'data/threads-posts.json'), planned: fx('threads-zero-riders', 'data/draft-bank.json') };
 const E = { posted: fx('threads-hetaro', 'data/threads-posts.json'), planned: fx('threads-hetaro', 'data/draft-bank.json') };
+const L = { posted: fx('threads-lostball-empowerartlab', 'data/threads-posts.json'), planned: fx('threads-lostball-empowerartlab', 'data/draft-bank.json') };
 const jst = (date, hm) => new Date(`${date}T${hm}:00+09:00`);
 const opt = (date, hm) => ({ now: jst(date, hm), graceMinutes: 30 });
 
-test('feeds.json: 3アカウントの Threads は 3枠、時刻は各リポジトリの lib/slots.mjs と同じ', () => {
+test('feeds.json: ハーレー・ZERO RIDERS・ヘタ郎の Threads は 3枠、時刻は各リポジトリの lib/slots.mjs と同じ', () => {
   assert.deepEqual(harley.slots.map((s) => s.time), ['7:05', '12:05', '20:05']);
   assert.deepEqual(zero.slots.map((s) => s.time), ['7:25', '12:25', '20:25']);
   assert.deepEqual(hetaro.slots.map((s) => s.time), ['7:45', '12:45', '20:45']);
-  for (const f of cfg.feeds.filter((x) => x.slots)) {
+  for (const f of [harley, zero, hetaro]) {
     assert.deepEqual(f.slots.map((s) => s.slot), ['morning', 'noon', 'night']);
     assert.equal(f.workflow, 'daily-post.yml');
-    assert.match(f.time, /^\d{1,2}:\d{2}$/, 'legacy の時刻は残す');
   }
+  for (const f of cfg.feeds.filter((x) => x.slots)) assert.match(f.time, /^\d{1,2}:\d{2}$/, 'legacy の時刻は残す');
   assert.equal(graceOf(harley, cfg), 30);
-  assert.equal(cfg.feeds.filter((x) => x.slots).length, 3, 'ほかの媒体は1日1本のまま');
+  assert.equal(cfg.feeds.filter((x) => x.slots).length, 4, 'ほかの媒体は1日1本のまま（Threads 3アカウント＋ロストボール）');
 });
 
 test('朝 7:30: ハーレーは 1/3、ZERO RIDERS・ヘタ郎は 0/3 でも正常（まだ時刻+猶予前）', () => {
@@ -211,4 +213,69 @@ test('scripts/watch.mjs を fixtures で dry-run: 12:45 は昼だけ、19:45 は
   assert.match(night, /1 missed slots/);
   assert.match(night, /ハーレー Threads：10\/21 夜 20:05 の分/);
   assert.doesNotMatch(night, /ヘタ郎 Threads/, 'ヘタ郎の夜(20:45 + 30分)はまだ');
+});
+
+// ---- ロストボール Threads: 1日4本（2026-10-20〜。日本語 7:35・12:35・20:35、英語 21:00） ----
+// 同じ「夜」に日本語と英語の2本があるので、枠は slot と lang の両方で数える（feeds.json の lang / label）。
+
+test('ロストボール: feeds.json は4枠（日本語 朝・昼・夜＋英語 夜21:00）、記録の targetDate を日付に使う', () => {
+  assert.deepEqual(lostball.slots.map((s) => `${s.slot}/${s.lang}/${s.time}`), ['morning/ja/7:35', 'noon/ja/12:35', 'night/ja/20:35', 'night/en/21:00']);
+  assert.equal(lostball.slotsFrom, '2026-10-20');
+  assert.equal(lostball.workflow, 'daily-live-post.yml');
+  assert.equal(lostball.posted.dayField, 'targetDate');
+});
+
+test('ロストボール: まとめは「4本（7:35・12:35・20:35・英語21:00）」、日本語の夜の記録は英語の枠に数えない', () => {
+  const morning = feedStatus(lostball, L.posted, L.planned, '2026-10-21', opt('2026-10-21', '07:30'));
+  assert.deepEqual([morning.slots.planned, morning.slots.approved, morning.slots.posted, morning.slots.later], [4, 4, 1, 3]);
+  const text = buildDigest({ today: '2026-10-21', rows: [{ feed: lostball, status: morning }] });
+  assert.match(text, /✅ Threads 4本（7:35・12:35・20:35・英語21:00） 承認済み 4\/4・1\/4 投稿済み/);
+  assert.match(text, /今日の予定 4本 → 投稿済み 1本（このあと 3本）/);
+
+  // 日本語3本が出て、英語がまだ（21:00 + 30分 を過ぎた 22:00）
+  const jaNight = { postedAt: '2026-10-21T11:36:00Z', lang: 'ja', slot: 'night', targetDate: '2026-10-21' };
+  const jaNoon = { postedAt: '2026-10-21T03:36:00Z', lang: 'ja', slot: 'noon', targetDate: '2026-10-21' };
+  const posted = { posts: [...L.posted.posts, jaNoon, jaNight] };
+  const late = feedStatus(lostball, posted, L.planned, '2026-10-21', opt('2026-10-21', '22:00'));
+  assert.equal(late.state, 'pending');
+  assert.deepEqual(late.slots.list.map((x) => x.posted), [true, true, true, false]);
+  const lateText = buildDigest({ today: '2026-10-21', rows: [{ feed: lostball, status: late }] });
+  assert.match(lateText, /⚠️ Threads 4本（7:35・12:35・20:35・英語21:00） 承認済み 4\/4・3\/4 投稿済み・英語 21:00 がまだ出ていない/);
+  assert.match(lateText, /ロストボール Threads：英語 21:00 の分が時間を過ぎても出ていません/);
+
+  // 英語が0時を過ぎて出ても、targetDate の日の分として数える
+  const enAfterMidnight = { postedAt: '2026-10-21T15:10:00Z', lang: 'en', slot: 'night', targetDate: '2026-10-21' };
+  const done = feedStatus(lostball, { posts: [...posted.posts, enAfterMidnight] }, L.planned, '2026-10-21', opt('2026-10-22', '00:20'));
+  assert.equal(done.state, 'posted');
+  assert.equal(done.slots.posted, 4);
+});
+
+test('ロストボール: 10/19までは従来の表示（Threads 5:00）', () => {
+  const s = feedStatus(lostball, L.posted, L.planned, '2026-10-19', opt('2026-10-19', '07:30'));
+  assert.equal(s.slots, undefined);
+  assert.equal(s.state, 'posted');
+  assert.match(buildDigest({ today: '2026-10-19', rows: [{ feed: lostball, status: s }] }), /✅ Threads 5:00 投稿済み/);
+});
+
+test('ロストボール: 見回りは4枠すべてを、時刻+猶予を過ぎた最初の見回りで1回だけ知らせる', () => {
+  const run = (since, now, posted = L.posted) =>
+    missedSlots(lostball, posted, L.planned, { since: jst('2026-10-21', since).toISOString(), now: jst('2026-10-21', now).toISOString(), graceMinutes: 30 }).map((m) => `${m.slot}/${m.lang}`);
+  assert.deepEqual(run('05:45', '23:45', { posts: [] }), ['morning/ja', 'noon/ja', 'night/ja', 'night/en']);
+  assert.deepEqual(run('07:45', '08:45'), [], '朝は記録あり');
+  assert.deepEqual(run('12:45', '13:45'), ['noon/ja']);
+  assert.deepEqual(run('20:45', '21:45'), ['night/ja', 'night/en'], '21:45 の見回りで日本語の夜(21:05)と英語(21:30)');
+  assert.deepEqual(run('21:45', '22:45'), [], 'くり返さない');
+  const ja = { posts: [...L.posted.posts, { postedAt: '2026-10-21T11:36:00Z', lang: 'ja', slot: 'night', targetDate: '2026-10-21' }] };
+  assert.deepEqual(run('20:45', '21:45', ja), ['night/en'], '日本語の夜が出ていても英語は別に数える');
+  const text = buildFailureAlert([], missedSlots(lostball, ja, L.planned, { since: jst('2026-10-21', '20:45').toISOString(), now: jst('2026-10-21', '21:45').toISOString(), graceMinutes: 30 }));
+  assert.match(text, /・ロストボール Threads：10\/21 英語 21:00 の分が、時間を過ぎても出ていません/);
+});
+
+test('scripts/watch.mjs を fixtures で dry-run: 21:45 はロストボールの日本語の夜と英語', () => {
+  const out = execFileSync(process.execPath, [fileURLToPath(new URL('../scripts/watch.mjs', import.meta.url))], {
+    env: { ...cleanEnv(), SINCE: '2026-10-21T20:45:00+09:00', NOW: '2026-10-21T21:45:00+09:00' },
+    encoding: 'utf8'
+  });
+  assert.match(out, /ロストボール Threads：10\/21 夜 20:35 の分/);
+  assert.match(out, /ロストボール Threads：10\/21 英語 21:00 の分/);
 });
