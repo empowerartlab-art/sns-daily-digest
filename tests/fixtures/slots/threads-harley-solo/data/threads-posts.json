@@ -1,0 +1,4 @@
+{ "_note": "テスト用(本文なし)", "posts": [
+  { "threadsPostId": "t1", "postedAt": "2026-10-18T20:00:30.000Z" },
+  { "threadsPostId": "t2", "postedAt": "2026-10-20T22:06:10.000Z", "slot": "morning", "targetDate": "2026-10-21" }
+] }

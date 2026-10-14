@@ -6,6 +6,6 @@
   "description": "全 SNS 自動投稿の結果を、毎朝7:30に1通・失敗時はすぐに LINE へ知らせる(読み取り専用)",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "check": "node --check lib/github.mjs && node --check lib/digest.mjs && node --check lib/line.mjs && node --check lib/kakeai.mjs && node --check scripts/digest.mjs && node --check scripts/watch.mjs && node --check scripts/connect.mjs"
+    "check": "node --check lib/github.mjs && node --check lib/digest.mjs && node --check lib/line.mjs && node --check lib/kakeai.mjs && node --check lib/slots.mjs && node --check scripts/digest.mjs && node --check scripts/watch.mjs && node --check scripts/connect.mjs"
   }
 }

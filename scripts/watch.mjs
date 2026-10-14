@@ -1,15 +1,18 @@
 // 1時間ごと: 前回の見回り以降に「失敗した実行」があれば、すぐに LINE で1通。無ければ何も送らない。
 // あわせて、前回以降に出たキャラクターの投稿に「掛け合い」の予定があれば、媒体ごとに1通ずつ知らせる。
 import { readFile } from 'node:fs/promises';
-import { githubClient } from '../lib/github.mjs';
+import { githubClient, fixtureClient } from '../lib/github.mjs';
 import { buildFailureAlert } from '../lib/digest.mjs';
+import { missedSlots, graceOf } from '../lib/slots.mjs';
 import { pushLine } from '../lib/line.mjs';
 import { dueKakeai, buildKakeaiMessage, dueReplies, buildReplyMessage } from '../lib/kakeai.mjs';
 import { jstDate } from '../lib/digest.mjs';
 
 const cfg = JSON.parse(await readFile(new URL('../feeds.json', import.meta.url), 'utf8'));
-const gh = githubClient({ token: process.env.GH_READ_TOKEN });
-const self = githubClient({ token: process.env.GITHUB_TOKEN });
+// FIXTURES_DIR / NOW / SINCE: 手元のフォルダと時刻で試すとき用。
+const gh = process.env.FIXTURES_DIR ? fixtureClient(process.env.FIXTURES_DIR) : githubClient({ token: process.env.GH_READ_TOKEN });
+const self = process.env.FIXTURES_DIR ? gh : githubClient({ token: process.env.GITHUB_TOKEN });
+const nowMs = process.env.NOW ? Date.parse(process.env.NOW) : Date.now();
 
 let since = null;
 try {
@@ -17,7 +20,7 @@ try {
 } catch {
   // 初回など
 }
-since ??= new Date(Date.now() - 65 * 60 * 1000).toISOString();
+since = (process.env.SINCE && new Date(process.env.SINCE).toISOString()) || since || new Date(nowMs - 65 * 60 * 1000).toISOString();
 
 const labels = new Map(cfg.feeds.map((f) => [f.repo, f.brand]));
 const failures = [];
@@ -28,11 +31,23 @@ for (const repo of [...new Set(cfg.feeds.map((f) => f.repo))]) {
     failures.push({ repo, label: labels.get(repo), name: `実行履歴が読めませんでした（${err.message}）`, url: '' });
   }
 }
-console.log(`watch since ${since}: ${failures.length} failures`);
-if (failures.length) await pushLine({ text: buildFailureAlert(failures), token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO });
+
+// 1日に複数本(slots)の媒体: 前回以降に「枠の時刻 + 猶予」を過ぎたのに記録が無い枠。枠ごとに1回だけ。後の枠は数えない。
+const now = new Date(nowMs).toISOString();
+const missed = [];
+for (const feed of cfg.feeds.filter((f) => Array.isArray(f.slots) && f.slots.length)) {
+  try {
+    const posted = await gh.readJson(cfg.owner, feed.repo, feed.posted.path, []);
+    const planned = await gh.readJson(cfg.owner, feed.repo, feed.planned.path, []);
+    missed.push(...missedSlots(feed, posted, planned, { since, now, graceMinutes: graceOf(feed, cfg) }));
+  } catch (err) {
+    console.log(`slots ${feed.brand} ${feed.media}: 読めませんでした（${err.message}）`);
+  }
+}
+console.log(`watch since ${since}: ${failures.length} failures, ${missed.length} missed slots`);
+if (failures.length || missed.length) await pushLine({ text: buildFailureAlert(failures, missed), token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO });
 
 // 掛け合いリマインド。失敗の見回りとは別に、読めなくても上の通知は止めない。ログにコメントの中身は出さない(公開リポジトリ)。
-const now = new Date().toISOString();
 for (const source of cfg.kakeai ?? []) {
   try {
     const entries = await gh.readJson(cfg.owner, source.repo, source.path, []);
@@ -41,8 +56,8 @@ for (const source of cfg.kakeai ?? []) {
     const due = dueKakeai({ source, entries, postedByMedia, since, now });
     for (const item of due) await pushLine({ text: buildKakeaiMessage(item), token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO });
     // 12時台（12:45 の見回り）だけ、②（キャラからの返し）の時間を知らせる。
-    const jstHour = new Date(Date.now() + 9 * 3600 * 1000).getUTCHours();
-    const replies = jstHour === 12 ? dueReplies({ source, entries, postedByMedia, today: jstDate() }) : [];
+    const jstHour = new Date(nowMs + 9 * 3600 * 1000).getUTCHours();
+    const replies = jstHour === 12 ? dueReplies({ source, entries, postedByMedia, today: jstDate(new Date(nowMs)) }) : [];
     for (const item of replies) await pushLine({ text: buildReplyMessage(item), token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO });
     console.log(`kakeai ${source.brand}: ${due.length} reminders, ${replies.length} reply reminders`);
   } catch (err) {

@@ -1,0 +1,6 @@
+{ "_note": "テスト用(本文なし)", "items": [
+  { "targetDate": "2026-10-19" },
+  { "targetDate": "2026-10-21", "slot": "morning" }, { "targetDate": "2026-10-21", "slot": "noon" }, { "targetDate": "2026-10-21", "slot": "night" },
+  { "targetDate": "2026-10-22", "slot": "morning" }, { "targetDate": "2026-10-22", "slot": "noon" }, { "targetDate": "2026-10-22", "slot": "night" },
+  { "targetDate": "2099-01-01" }
+] }

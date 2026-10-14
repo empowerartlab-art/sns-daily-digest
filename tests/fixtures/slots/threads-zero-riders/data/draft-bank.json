@@ -1,0 +1,4 @@
+[ { "id": "z1", "date": "2026-10-21", "approved": true },
+  { "id": "z2", "date": "2026-10-22", "slot": "morning", "approved": true },
+  { "id": "z3", "date": "2026-10-22", "slot": "noon", "approved": true },
+  { "id": "z4", "date": "2026-10-22", "slot": "night", "approved": true } ]
