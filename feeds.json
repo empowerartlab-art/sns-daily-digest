@@ -47,6 +47,8 @@
       "posted": { "path": "data/ig-posts.json", "date": "date" },
       "planned": { "path": "data/ig-queue.json", "date": "date", "approved": "approved" } }
   ],
+  "gbp": { "_note": "Googleビジネスプロフィール(手で予約。APIなし)。予約の記録を読んで、朝のまとめに「予約済み〜いつまで」、土日に来週分(火〜月)の確認・承認、予約切れ間近を載せる。毎時の見回りでは知らせない。",
+    "brand": "エンパワー", "label": "Googleビジネスプロフィール", "repo": "threads-automation-empower", "path": "data/gbp-schedule.json" },
   "tokens": [
     { "label": "ロストボール Instagram", "repo": "threads-lostball-empowerartlab", "path": "data/ig-account.json", "field": "igTokenExpiresAt" },
     { "label": "ZERO RIDERS Threads", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "tokenExpiresAt" },

@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "profile": "エンパワーアートラボ with MUSIC JAM（川崎）",
+  "postTime": "09:15",
+  "perDay": 1,
+  "cycle": "Tue-Mon",
+  "updatedAt": "2026-10-14T23:00:00+09:00",
+  "_howTo": "予約したら days に1行足す（または draft/approved の行を書き換える）。status は reserved（Googleの投稿一覧で公開予定を確認済み）／approved（承認済み・未予約）／draft（下書き・未承認）。checkedAt は投稿一覧で確認した日。本文は書かない。",
+  "days": [
+    {
+      "date": "2026-10-07",
+      "id": "A-1",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-08",
+      "id": "A-2",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-09",
+      "id": "A-3",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-10",
+      "id": "A-4",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-11",
+      "id": "A-5",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-12",
+      "id": "A-6",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-13",
+      "id": "B-1",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-14",
+      "id": "B-2",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-15",
+      "id": "B-3",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-16",
+      "id": "B-4",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-17",
+      "id": "B-5",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-18",
+      "id": "B-6",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-19",
+      "id": "B-7",
+      "status": "reserved",
+      "checkedAt": "2026-10-07"
+    },
+    {
+      "date": "2026-10-20",
+      "id": "C-1",
+      "status": "draft"
+    },
+    {
+      "date": "2026-10-21",
+      "id": "C-2",
+      "status": "draft"
+    },
+    {
+      "date": "2026-10-22",
+      "id": "C-3",
+      "status": "draft"
+    },
+    {
+      "date": "2026-10-23",
+      "id": "C-4",
+      "status": "draft"
+    },
+    {
+      "date": "2026-10-24",
+      "id": "C-5",
+      "status": "draft"
+    },
+    {
+      "date": "2026-10-25",
+      "id": "C-6",
+      "status": "draft"
+    },
+    {
+      "date": "2026-10-26",
+      "id": "C-7",
+      "status": "draft"
+    }
+  ]
+}

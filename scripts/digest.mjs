@@ -6,6 +6,7 @@ import { feedStatus, buildDigest, jstDate } from '../lib/digest.mjs';
 import { pushLine } from '../lib/line.mjs';
 import { graceOf } from '../lib/slots.mjs';
 import { postLink, kakeaiDigestLines, kakeaiRecord } from '../lib/kakeai.mjs';
+import { gbpStatus, gbpLine, gbpTodo } from '../lib/gbp.mjs';
 
 const cfg = JSON.parse(await readFile(new URL('../feeds.json', import.meta.url), 'utf8'));
 // FIXTURES_DIR: 手元のフォルダを GitHub の代わりに読む(試し用)。NOW: いまの時刻(ISO、試し用)。
@@ -63,6 +64,22 @@ for (const source of cfg.kakeai ?? []) {
   }
 }
 
-const text = buildDigest({ today, rows, failures, tokens }) + kakeaiDigestLines(kakeai).map((l) => `\n${l}`).join('');
+// Googleビジネスプロフィール（手で予約）。読めなくても「読めません（未確認）」の1行だけにして、まとめは送る。
+let gbp = null;
+if (cfg.gbp) {
+  let status = null;
+  try {
+    status = gbpStatus(await gh.readJson(cfg.owner, cfg.gbp.repo, cfg.gbp.path, null), today);
+  } catch {
+    status = null;
+  }
+  try {
+    gbp = { brand: cfg.gbp.brand, line: gbpLine(status, cfg.gbp.label), todo: gbpTodo(status, today) };
+  } catch {
+    gbp = { brand: cfg.gbp.brand, line: gbpLine(null), todo: [] };
+  }
+}
+
+const text = buildDigest({ today, rows, failures, tokens, gbp }) + kakeaiDigestLines(kakeai).map((l) => `\n${l}`).join('');
 await pushLine({ text, token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO });
 console.log(`digest ${today}: ${rows.length} feeds, ${failures.length} failures`);
