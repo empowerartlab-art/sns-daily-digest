@@ -7,6 +7,7 @@ import { missedSlots, graceOf } from '../lib/slots.mjs';
 import { pushLine } from '../lib/line.mjs';
 import { dueKakeai, buildKakeaiMessage, dueReplies, buildReplyMessage } from '../lib/kakeai.mjs';
 import { jstDate } from '../lib/digest.mjs';
+import { runCommentAssist } from '../lib/comments.mjs';
 
 const cfg = JSON.parse(await readFile(new URL('../feeds.json', import.meta.url), 'utf8'));
 // FIXTURES_DIR / NOW / SINCE: 手元のフォルダと時刻で試すとき用。
@@ -63,4 +64,25 @@ for (const source of cfg.kakeai ?? []) {
   } catch (err) {
     console.log(`kakeai ${source.brand}: 読めませんでした（${err.message}）`);
   }
+}
+
+// コメントの返信アシスト（lib/comments.mjs）。各リポジトリの暗号化されたコメントを読み、返信案つきで LINE に1件ずつ。
+// 上の失敗の見回り・掛け合いとは別。ここで何が起きても上の通知は止めない。ログは件数だけ(公開リポジトリ)。
+try {
+  const lineToken = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+  const lineTo = process.env.LINE_TO;
+  const stats = await runCommentAssist({
+    cfg,
+    gh,
+    since,
+    now,
+    privateKeyPem: process.env.INBOX_PRIVATE_KEY,
+    geminiKey: (process.env.GEMINI_API_KEY ?? '').trim(),
+    model: (process.env.GEMINI_MODEL ?? '').trim() || undefined,
+    // 鍵が無いときも中身はログに出さない（pushLine の dry-run 表示を使わない）。
+    push: (text) => pushLine({ text, token: lineToken, to: lineTo, log: () => console.log('comments: LINE の鍵が未設定のため送信しませんでした（中身は出しません）') }),
+  });
+  console.log(`comments: ${stats.sent} sent, ${stats.queued} queued, ${stats.dropped} dropped, ${stats.unreadable} unreadable, ${stats.aiErrors} ai errors, ${stats.sendErrors} send errors`);
+} catch (err) {
+  console.log(`comments: 途中で止まりました（${err?.name ?? 'Error'}）`);
 }

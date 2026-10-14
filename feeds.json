@@ -1,5 +1,5 @@
 {
-  "_note": "見回る自動投稿の一覧。kakeai=キャラ投稿が出たら公式からのコメント案をLINEで知らせる予定(各リポジトリの kakeai.json)。アカウントや媒体が増えたら1行足す。posted=投稿済みの記録、planned=予定(承認済み)。date が ISO 時刻のものは iso:true(日本時間の日付に直して比べる)。dayField=記録にその項目があれば日本時間の日付としてそのまま使う。slots=1日に複数本投稿する媒体の枠と時刻(JST)。slot を持つ予定・記録はその枠、slot が無いものは従来の1日1本で time の時刻。slotsFrom 以降で予定の無い日は枠の表示。枠の lang=予定・記録の lang も一致するものだけその枠(同じ夜に日本語と英語がある媒体用)、label=表示名(例: 英語)。graceMinutes=枠の時刻からこの分を過ぎても記録が無ければ「出ていない」。",
+  "_note": "見回る自動投稿の一覧。commentInbox=各リポジトリが見つけた新しいコメント(暗号化)を読み、返信案つきでLINEへ(lib/comments.mjs。tone=口調、facts=言ってよい事実)。kakeai=キャラ投稿が出たら公式からのコメント案をLINEで知らせる予定(各リポジトリの kakeai.json)。アカウントや媒体が増えたら1行足す。posted=投稿済みの記録、planned=予定(承認済み)。date が ISO 時刻のものは iso:true(日本時間の日付に直して比べる)。dayField=記録にその項目があれば日本時間の日付としてそのまま使う。slots=1日に複数本投稿する媒体の枠と時刻(JST)。slot を持つ予定・記録はその枠、slot が無いものは従来の1日1本で time の時刻。slotsFrom 以降で予定の無い日は枠の表示。枠の lang=予定・記録の lang も一致するものだけその枠(同じ夜に日本語と英語がある媒体用)、label=表示名(例: 英語)。graceMinutes=枠の時刻からこの分を過ぎても記録が無ければ「出ていない」。",
   "graceMinutes": 30,
   "owner": "empowerartlab-art",
   "feeds": [
@@ -61,6 +61,14 @@
     { "label": "ZERO RIDERS Instagram", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "igTokenExpiresAt" },
     { "label": "ヘタ郎 Threads", "repo": "threads-hetaro", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
     { "label": "ヘタ郎 Instagram", "repo": "threads-hetaro", "path": "data/token-meta.json", "field": "igTokenExpiresAt" }
+  ],
+  "commentInbox": [
+    { "brand": "ハーレー", "repo": "threads-harley-solo", "path": "data/comment-inbox.enc.json", "tone": "harley" },
+    { "brand": "ZERO RIDERS", "repo": "threads-zero-riders", "path": "data/comment-inbox.enc.json", "tone": "zero-riders" },
+    { "brand": "ヘタ郎", "repo": "threads-hetaro", "path": "data/comment-inbox.enc.json", "tone": "hetaro" },
+    { "brand": "ロストボール", "repo": "threads-lostball-empowerartlab", "path": "data/comment-inbox.enc.json", "tone": "lostball",
+      "facts": { "path": "data/verified-facts.json" } },
+    { "brand": "エンパワー", "repo": "threads-automation-empower", "path": "data/comment-inbox.enc.json", "tone": "empower" }
   ],
   "kakeai": [
     { "brand": "ヘタ郎", "repo": "threads-hetaro", "path": "data/kakeai.json",
