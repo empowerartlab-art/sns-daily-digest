@@ -1,0 +1,4 @@
+[
+  { "date": "2026-10-15", "status": "skipped", "reason": "manual-post", "title": "T15", "url": null, "recordedAt": "2026-10-15T06:00:00Z", "note": "手動で投稿" },
+  { "date": "2026-10-16", "status": "stopped", "reason": "AUTH_REQUIRED", "detail": "AUTH_REQUIRED", "title": "T16", "url": null, "recordedAt": "2026-10-15T21:01:30Z" }
+]

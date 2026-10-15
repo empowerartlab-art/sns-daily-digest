@@ -8,6 +8,7 @@ import { pushLine } from '../lib/line.mjs';
 import { dueKakeai, buildKakeaiMessage, dueReplies, buildReplyMessage } from '../lib/kakeai.mjs';
 import { jstDate } from '../lib/digest.mjs';
 import { runCommentAssist } from '../lib/comments.mjs';
+import { dueMacAlerts, buildMacAlert } from '../lib/macstatus.mjs';
 
 const cfg = JSON.parse(await readFile(new URL('../feeds.json', import.meta.url), 'utf8'));
 // FIXTURES_DIR / NOW / SINCE: 手元のフォルダと時刻で試すとき用。
@@ -47,6 +48,27 @@ for (const feed of cfg.feeds.filter((f) => Array.isArray(f.slots) && f.slots.len
 }
 console.log(`watch since ${since}: ${failures.length} failures, ${missed.length} missed slots`);
 if (failures.length || missed.length) await pushLine({ text: buildFailureAlert(failures, missed), token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO });
+
+// Mac で動く投稿(LITALICO・note)。前回の見回り以降に「止まった・エラー」の記録が入っていれば、1件ずつ LINE に1通。
+// GitHub の実行履歴には出ないので、Mac が data/mac-status/ に書く記録を読む。上の通知とは別で、ここで何が起きても止めない。
+// ログは件数だけ(公開リポジトリ。タイトル・理由は出さない)。
+for (const source of cfg.macStatus ?? []) {
+  try {
+    const due = dueMacAlerts(await gh.readJson(cfg.owner, source.repo, source.path, []), { since, now });
+    let sent = 0;
+    for (const rec of due) {
+      try {
+        await pushLine({ text: buildMacAlert(source.label, rec), token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO, log: () => console.log(`mac ${source.label}: LINE の鍵が未設定のため送信しませんでした（中身は出しません）`) });
+        sent++;
+      } catch (err) {
+        console.log(`mac ${source.label}: 送信に失敗しました（${err?.name ?? 'Error'}）`);
+      }
+    }
+    console.log(`mac ${source.label}: ${due.length} stops, ${sent} sent`);
+  } catch (err) {
+    console.log(`mac ${source.label}: 読めませんでした（${err?.name ?? 'Error'}）`);
+  }
+}
 
 // 掛け合いリマインド。失敗の見回りとは別に、読めなくても上の通知は止めない。ログにコメントの中身は出さない(公開リポジトリ)。
 for (const source of cfg.kakeai ?? []) {

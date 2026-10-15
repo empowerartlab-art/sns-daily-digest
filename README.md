@@ -17,6 +17,10 @@
   - 1回の見回りで最大10件。多いときは「ほかにN件（次の見回りで送ります）」と1行送り、次の見回りで実際に送る。送る時刻は、コメントを見つけた時刻＋10分以降の最初の「:40」（5時台〜23時台）に1件ずつ割り当て、1つの :40 に10件まで。あふれたら次の :40 へ。毎時の見回りは「前回の開始〜今」に入る :40 の分だけ送るので、同じコメントを2回送らない（状態ファイルは持たない。`lib/comments.mjs` の先頭に説明）。見回りが抜けたときだけ、10件を超えた分を「送れませんでした」と件数で知らせる。
   - AI の鍵（`GEMINI_API_KEY`）が無いあいだは、コメントだけ送り「返信案はAIの鍵の登録後に付きます」。モデルは `gemini-3.5-flash-lite`（変数 `GEMINI_MODEL` で変更可）。
   - ログには件数だけ（コメント・名前・返信案は出さない）。
+- **Mac で動く投稿（エンパワー LITALICO 6:00・note 5:55、2026-10-16〜）**：GitHub では動いていないので、Mac の `~/projects/mac-status-reporter/report_status.py` が実行のたびに結果を `threads-automation-empower` の `data/mac-status/`（`litalico-posts.json`・`note-posts.json`＝日付・状態・理由コード・公開タイトル・公開URLだけ。`*-planned.json`＝承認済みの日付だけ）に書く（`feeds.json` の LITALICO・note と `macStatus`）。
+  - 朝のまとめ：公開（published）・手動で投稿済み（skipped）は「投稿済み」、止まった記録だけなら「止まりました」、記録が無ければ「予定あり・まだ出ていない」（Mac が寝ていた・動かなかったとき）。
+  - 毎時の見回り：前回以降に「止まった・エラー」の記録が入れば、1件ずつ「【⚠️ LITALICO の投稿が止まりました】日付・理由（やさしい日本語）・対処」を1通。理由の言い換えは `lib/macstatus.mjs`。ログは件数だけ。
+  - 手元で試すとき：`FIXTURES_DIR=tests/fixtures/macstatus NOW=2026-10-16T07:30:00+09:00 node scripts/digest.mjs`
 - **時間**：まとめ 7:30 JST（`digest.yml`）／失敗の見回り 5:45〜23:45 JST の毎時（`watch.yml`）。
 - **鍵**（GitHub Secrets。値はここに置かない）：
   - `GH_READ_TOKEN`：5つの自動投稿リポジトリを読むだけの鍵（Contents・Actions を Read-only）

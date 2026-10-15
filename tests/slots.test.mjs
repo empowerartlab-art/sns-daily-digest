@@ -34,7 +34,8 @@ test('feeds.json: ハーレー・ZERO RIDERS・ヘタ郎の Threads は 3枠、�
   for (const f of cfg.feeds.filter((x) => x.slots)) assert.match(f.time, /^\d{1,2}:\d{2}$/, 'legacy の時刻は残す');
   assert.equal(graceOf(harley, cfg), 30);
   assert.equal(cfg.feeds.filter((x) => x.slots).length, 10, '枠は Threads 5アカウント＋X 5アカウント。Instagram は1日1本のまま');
-  assert.deepEqual(cfg.feeds.filter((x) => !x.slots).map((x) => x.media), ['Instagram', 'Instagram', 'Instagram']);
+  // Mac(launchd)で動く LITALICO・note は1日1本(枠なし)。
+  assert.deepEqual(cfg.feeds.filter((x) => !x.slots && !x.workflow.startsWith('(Mac)')).map((x) => x.media), ['Instagram', 'Instagram', 'Instagram']);
 });
 
 test('朝 7:30: ハーレーは 1/3、ZERO RIDERS・ヘタ郎は 0/3 でも正常（まだ時刻+猶予前）', () => {

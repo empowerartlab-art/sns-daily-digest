@@ -41,6 +41,12 @@
       "slotsFrom": "2026-10-20", "slots": [{ "slot": "morning", "time": "8:10" }, { "slot": "noon", "time": "13:10" }, { "slot": "night", "time": "21:10" }],
       "posted": { "path": "data/x-posts.json", "date": "date" },
       "planned": { "path": "data/x-queue.json", "date": "date", "approved": "approved" } },
+    { "brand": "エンパワー", "media": "LITALICO", "time": "6:00", "repo": "threads-automation-empower", "workflow": "(Mac) com.artlab.litalico-blog-daily",
+      "posted": { "path": "data/mac-status/litalico-posts.json", "date": "date", "statusIn": ["published", "skipped"] },
+      "planned": { "path": "data/mac-status/litalico-planned.json", "date": "date", "approved": "approved" } },
+    { "brand": "エンパワー", "media": "note", "time": "5:55", "repo": "threads-automation-empower", "workflow": "(Mac) com.artlab.vulpix-note-daily",
+      "posted": { "path": "data/mac-status/note-posts.json", "date": "date", "statusIn": ["published", "skipped"] },
+      "planned": { "path": "data/mac-status/note-planned.json", "date": "date", "approved": "approved" } },
     { "brand": "ヘタ郎", "media": "Threads", "time": "5:37", "repo": "threads-hetaro", "workflow": "daily-post.yml",
       "slotsFrom": "2026-10-20", "slots": [{ "slot": "morning", "time": "7:45" }, { "slot": "noon", "time": "12:45" }, { "slot": "night", "time": "20:45" }],
       "posted": { "path": "data/threads-posts.json", "date": "date" },
@@ -52,6 +58,11 @@
     { "brand": "ヘタ郎", "media": "Instagram", "time": "6:37", "repo": "threads-hetaro", "workflow": "ig-post.yml",
       "posted": { "path": "data/ig-posts.json", "date": "date" },
       "planned": { "path": "data/ig-queue.json", "date": "date", "approved": "approved" } }
+  ],
+  "macStatus": [
+    { "_note": "Mac(launchd)で動く投稿の結果。Mac の ~/projects/mac-status-reporter/report_status.py が実行のたびに書く。毎時の見回りで stopped/error の記録を1件ずつ LINE へ。",
+      "label": "LITALICO", "repo": "threads-automation-empower", "path": "data/mac-status/litalico-posts.json" },
+    { "label": "note", "repo": "threads-automation-empower", "path": "data/mac-status/note-posts.json" }
   ],
   "gbp": { "_note": "Googleビジネスプロフィール(手で予約。APIなし)。予約の記録を読んで、朝のまとめに「予約済み〜いつまで」、土日に来週分(火〜月)の確認・承認、予約切れ間近を載せる。毎時の見回りでは知らせない。",
     "brand": "エンパワー", "label": "Googleビジネスプロフィール", "repo": "threads-automation-empower", "path": "data/gbp-schedule.json" },
