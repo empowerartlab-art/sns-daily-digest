@@ -66,6 +66,11 @@
   ],
   "gbp": { "_note": "Googleビジネスプロフィール(手で予約。APIなし)。予約の記録を読んで、朝のまとめに「予約済み〜いつまで」、土日に来週分(火〜月)の確認・承認、予約切れ間近を載せる。毎時の見回りでは知らせない。",
     "brand": "エンパワー", "label": "Googleビジネスプロフィール", "repo": "threads-automation-empower", "path": "data/gbp-schedule.json" },
+  "staff": { "_note": "スタッフ用LINE（別の公式アカウント、友だち全員に broadcast）。エンパワーだけ。media=朝8:00のまとめに載せる媒体（この順。GBP は下の gbp）。alertMedia=毎時の見回りで「止まりました」を送る媒体（Mac の記録は macStatus の label、GitHub の失敗は feeds の workflow で探す）。ほかのブランド・代表だけの情報は載せない。",
+    "brand": "エンパワー",
+    "media": ["note", "LITALICO", "Threads", "GBP"],
+    "alertMedia": ["LITALICO", "note", "Threads", "X"],
+    "gbp": { "label": "Google ビジネスプロフィール", "repo": "threads-automation-empower", "path": "data/gbp-schedule.json" } },
   "tokens": [
     { "label": "ロストボール Instagram", "repo": "threads-lostball-empowerartlab", "path": "data/ig-account.json", "field": "igTokenExpiresAt" },
     { "label": "ZERO RIDERS Threads", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "tokenExpiresAt" },

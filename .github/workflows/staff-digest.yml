@@ -1,0 +1,26 @@
+name: スタッフ向け 今日の発信 (08:00 JST)
+
+# エンパワーの「今日の発信」を、スタッフ用LINE公式アカウントの友だち全員に毎朝1通(broadcast)。読むだけ。
+# 鍵(STAFF_LINE_CHANNEL_ACCESS_TOKEN)が無いあいだは送らず、1行だけログに出して成功で終わる。
+on:
+  schedule:
+    - cron: "0 23 * * *" # 23:00 UTC = 08:00 JST
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  staff-digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: まとめを作ってスタッフ用LINEに送る
+        env:
+          GH_READ_TOKEN: ${{ secrets.GH_READ_TOKEN }}
+          STAFF_LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.STAFF_LINE_CHANNEL_ACCESS_TOKEN }}
+        run: node scripts/staff-digest.mjs

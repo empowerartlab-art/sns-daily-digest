@@ -9,6 +9,8 @@ import { dueKakeai, buildKakeaiMessage, dueReplies, buildReplyMessage } from '..
 import { jstDate } from '../lib/digest.mjs';
 import { runCommentAssist } from '../lib/comments.mjs';
 import { dueMacAlerts, buildMacAlert } from '../lib/macstatus.mjs';
+import { broadcastLine, STAFF_NO_TOKEN } from '../lib/line.mjs';
+import { staffMacAlerts, staffRunAlerts } from '../lib/staff.mjs';
 
 const cfg = JSON.parse(await readFile(new URL('../feeds.json', import.meta.url), 'utf8'));
 // FIXTURES_DIR / NOW / SINCE: 手元のフォルダと時刻で試すとき用。
@@ -52,9 +54,11 @@ if (failures.length || missed.length) await pushLine({ text: buildFailureAlert(f
 // Mac で動く投稿(LITALICO・note)。前回の見回り以降に「止まった・エラー」の記録が入っていれば、1件ずつ LINE に1通。
 // GitHub の実行履歴には出ないので、Mac が data/mac-status/ に書く記録を読む。上の通知とは別で、ここで何が起きても止めない。
 // ログは件数だけ(公開リポジトリ。タイトル・理由は出さない)。
+const macDue = []; // スタッフ用LINE（下）でも使う
 for (const source of cfg.macStatus ?? []) {
   try {
     const due = dueMacAlerts(await gh.readJson(cfg.owner, source.repo, source.path, []), { since, now });
+    macDue.push(...due.map((rec) => ({ label: source.label, repo: source.repo, rec })));
     let sent = 0;
     for (const rec of due) {
       try {
@@ -107,4 +111,26 @@ try {
   console.log(`comments: ${stats.sent} sent, ${stats.queued} queued, ${stats.dropped} dropped, ${stats.unreadable} unreadable, ${stats.aiErrors} ai errors, ${stats.sendErrors} send errors`);
 } catch (err) {
   console.log(`comments: 途中で止まりました（${err?.name ?? 'Error'}）`);
+}
+
+// スタッフ用LINE（エンパワーだけ、友だち全員に broadcast）。上で見つけた「Mac の止まった記録」と「失敗した実行」のうち、
+// feeds.json の staff の媒体の分だけを1件ずつ。運用者本人用の鍵は使わない。ここで何が起きても上の通知には影響しない。
+// ログは件数だけ（中身は出さない）。
+try {
+  const texts = [...staffMacAlerts(cfg, macDue), ...staffRunAlerts(cfg, failures)];
+  let sent = 0;
+  let noToken = false;
+  let sendErrors = 0;
+  for (const text of texts) {
+    try {
+      const r = await broadcastLine({ text, token: process.env.STAFF_LINE_CHANNEL_ACCESS_TOKEN, log: () => { noToken = true; } });
+      if (r.sent) sent++;
+    } catch {
+      sendErrors++;
+    }
+  }
+  if (noToken) console.log(STAFF_NO_TOKEN);
+  console.log(`staff: ${texts.length} alerts, ${sent} sent, ${sendErrors} send errors`);
+} catch (err) {
+  console.log(`staff: 途中で止まりました（${err?.name ?? 'Error'}）`);
 }
