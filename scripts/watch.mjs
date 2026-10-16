@@ -3,7 +3,7 @@
 import { readFile } from 'node:fs/promises';
 import { githubClient, fixtureClient } from '../lib/github.mjs';
 import { buildFailureAlert } from '../lib/digest.mjs';
-import { missedSlots, graceOf } from '../lib/slots.mjs';
+import { missedPosts, graceOf } from '../lib/slots.mjs';
 import { pushLine } from '../lib/line.mjs';
 import { dueKakeai, buildKakeaiMessage, dueReplies, buildReplyMessage } from '../lib/kakeai.mjs';
 import { jstDate } from '../lib/digest.mjs';
@@ -36,19 +36,20 @@ for (const repo of [...new Set(cfg.feeds.map((f) => f.repo))]) {
   }
 }
 
-// 1日に複数本(slots)の媒体: 前回以降に「枠の時刻 + 猶予」を過ぎたのに記録が無い枠。枠ごとに1回だけ。後の枠は数えない。
+// 前回以降に「時刻 + 猶予」を過ぎたのに記録が無い投稿。枠(slots)の媒体は枠ごと、1日1本の日は feed.time で。
+// どちらも承認済みの予定がある日だけ、1回だけ。後の枠・後の時刻は数えない(lib/slots.mjs の missedPosts)。
 const now = new Date(nowMs).toISOString();
 const missed = [];
-for (const feed of cfg.feeds.filter((f) => Array.isArray(f.slots) && f.slots.length)) {
+for (const feed of cfg.feeds.filter((f) => (Array.isArray(f.slots) && f.slots.length) || f.time)) {
   try {
     const posted = await gh.readJson(cfg.owner, feed.repo, feed.posted.path, []);
     const planned = await gh.readJson(cfg.owner, feed.repo, feed.planned.path, []);
-    missed.push(...missedSlots(feed, posted, planned, { since, now, graceMinutes: graceOf(feed, cfg) }));
+    missed.push(...missedPosts(feed, posted, planned, { since, now, graceMinutes: graceOf(feed, cfg) }));
   } catch (err) {
     console.log(`slots ${feed.brand} ${feed.media}: 読めませんでした（${err.message}）`);
   }
 }
-console.log(`watch since ${since}: ${failures.length} failures, ${missed.length} missed slots`);
+console.log(`watch since ${since}: ${failures.length} failures, ${missed.filter((m) => !m.legacy).length} missed slots, ${missed.filter((m) => m.legacy).length} late posts`);
 if (failures.length || missed.length) await pushLine({ text: buildFailureAlert(failures, missed), token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO });
 
 // Mac で動く投稿(LITALICO・note)。前回の見回り以降に「止まった・エラー」の記録が入っていれば、1件ずつ LINE に1通。
