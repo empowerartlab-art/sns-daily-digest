@@ -52,6 +52,7 @@ for (const t of cfg.tokens) {
 // 今日の掛け合い（予定と、投稿が出ていればそのリンク）。読めなくてもまとめは送る。
 const kakeai = [];
 for (const source of cfg.kakeai ?? []) {
+  if (source.paused) continue; // feeds.json で止めている分は載せない
   try {
     for (const e of await read(source.repo, source.path)) {
       const m = source.media?.[e.media];

@@ -77,6 +77,7 @@ for (const source of cfg.macStatus ?? []) {
 
 // 掛け合いリマインド。失敗の見回りとは別に、読めなくても上の通知は止めない。ログにコメントの中身は出さない(公開リポジトリ)。
 for (const source of cfg.kakeai ?? []) {
+  if (source.paused) continue; // feeds.json で止めている分は知らせない
   try {
     const entries = await gh.readJson(cfg.owner, source.repo, source.path, []);
     const postedByMedia = {};

@@ -197,7 +197,7 @@ test('scripts/digest.mjs を手元の fixtures で dry-run（LINE には送ら�
   assert.match(out, /■ハーレー\n✅ Threads 3本（7:05・12:05・20:05） 承認済み 3\/3・1\/3 投稿済み/);
   assert.match(out, /■ZERO RIDERS\n✅ Threads 6:00 投稿済み/);
   assert.match(out, /■ヘタ郎\n✅ Threads 3本（7:45・12:45・20:45） 承認済み 3\/3・0\/3 投稿済み/);
-  assert.match(out, /【今日の掛け合い】\n・ ヘタ郎 Threads（投稿待ち）/);
+  assert.doesNotMatch(out, /【今日の掛け合い】/); // feeds.json で paused（2026-10-18〜）
   assert.match(out, /■ハーレー\n.*\n✅ X 3本（6:50・11:50・19:50） 承認済み 3\/3・1\/3 投稿済み/);
   assert.match(out, /■エンパワー\n✅ Threads 3本（7:55・12:55・20:55） 承認済み 3\/3・0\/3 投稿済み/);
   assert.equal(jstDate(new Date('2026-10-20T22:30:00Z')), '2026-10-21');

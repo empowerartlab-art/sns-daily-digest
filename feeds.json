@@ -88,6 +88,7 @@
   ],
   "kakeai": [
     { "brand": "ヘタ郎", "repo": "threads-hetaro", "path": "data/kakeai.json",
+      "paused": "2026-10-18 山本さん指示で停止（LINEのお知らせ・朝のまとめに出さない）。戻すときはこの行を消す",
       "media": {
         "Threads": { "posted": "data/threads-posts.json", "link": "https://www.threads.com/@hetarou.golf2026" },
         "X": { "posted": "data/x-posts.json", "postLink": "https://x.com/Hetarougolf/status/{xId}", "link": "https://x.com/Hetarougolf" },
