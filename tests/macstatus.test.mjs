@@ -17,7 +17,16 @@ test('feeds.json: LITALICO 6:00 と note がエンパワーの欄にあり、mac
   assert.equal(lit.time, '6:00');
   assert.equal(note.brand, 'エンパワー');
   assert.equal(lit.posted.path, 'data/mac-status/litalico-posts.json');
-  assert.deepEqual(cfg.macStatus.map((m) => m.label), ['LITALICO', 'note']);
+  assert.deepEqual(cfg.macStatus.map((m) => m.label), ['LITALICO', 'note', 'ソーシャルライフ note']);
+});
+
+test('feeds.json: ソーシャルライフの note は自分のリポジトリの記録を読み、エンパワーの note-posts.json とは混ぜない', () => {
+  const sl = cfg.macStatus.find((m) => m.label === 'ソーシャルライフ note');
+  assert.deepEqual([sl.repo, sl.path], ['threads-social-life', 'data/mac-status/note-posts.json']);
+  const feed = cfg.feeds.find((f) => f.brand === 'ソーシャルライフ' && f.media === 'note');
+  assert.equal(feed.repo, 'threads-social-life');
+  assert.equal(feed.posted.path, sl.path);
+  assert.equal(note.repo, 'threads-automation-empower');
 });
 
 test('止まった・エラーの記録だけ、since〜now の間のものを拾う', () => {

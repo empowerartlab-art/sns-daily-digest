@@ -33,9 +33,20 @@ test('feeds.json: ハーレー・ZERO RIDERS・ヘタ郎の Threads は 3枠、�
   }
   for (const f of cfg.feeds.filter((x) => x.slots)) assert.match(f.time, /^\d{1,2}:\d{2}$/, 'legacy の時刻は残す');
   assert.equal(graceOf(harley, cfg), 30);
-  assert.equal(cfg.feeds.filter((x) => x.slots).length, 10, '枠は Threads 5アカウント＋X 5アカウント。Instagram は1日1本のまま');
+  assert.equal(cfg.feeds.filter((x) => x.slots).length, 12, '枠は Threads 6アカウント＋X 6アカウント。Instagram は1日1本のまま');
   // Mac(launchd)で動く LITALICO・note は1日1本(枠なし)。
-  assert.deepEqual(cfg.feeds.filter((x) => !x.slots && !x.workflow.startsWith('(Mac)')).map((x) => x.media), ['Instagram', 'Instagram', 'Instagram']);
+  assert.deepEqual(cfg.feeds.filter((x) => !x.slots && !x.workflow.startsWith('(Mac)')).map((x) => x.media), ['Instagram', 'Instagram', 'Instagram', 'Instagram']);
+});
+
+test('feeds.json: ソーシャルライフ（10/20〜）は Threads 7:15/12:15/20:15・X 8:30/13:30/21:30・Instagram 12:05・note 6:10（Mac）', () => {
+  const sl = (media) => cfg.feeds.find((x) => x.brand === 'ソーシャルライフ' && x.media === media);
+  assert.deepEqual(sl('Threads').slots.map((s) => s.time), ['7:15', '12:15', '20:15']);
+  assert.deepEqual(sl('X').slots.map((s) => s.time), ['8:30', '13:30', '21:30']);
+  for (const m of ['Threads', 'X']) assert.equal(sl(m).slotsFrom, '2026-10-20');
+  assert.equal(sl('Instagram').time, '12:05');
+  assert.equal(sl('note').time, '6:10');
+  assert.equal(sl('note').workflow, '(Mac) com.artlab.sociallife-note-daily');
+  for (const m of ['Threads', 'X', 'Instagram', 'note']) assert.equal(sl(m).repo, 'threads-social-life');
 });
 
 test('朝 7:30: ハーレーは 1/3、ZERO RIDERS・ヘタ郎は 0/3 でも正常（まだ時刻+猶予前）', () => {

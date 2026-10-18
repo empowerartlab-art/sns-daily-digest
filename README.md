@@ -26,6 +26,9 @@
   - 朝のまとめ：公開（published）・手動で投稿済み（skipped）は「投稿済み」、止まった記録だけなら「止まりました」、記録が無ければ「予定あり・まだ出ていない」（Mac が寝ていた・動かなかったとき）。
   - 毎時の見回り：前回以降に「止まった・エラー」の記録が入れば、1件ずつ「【⚠️ LITALICO の投稿が止まりました】日付・理由（やさしい日本語）・対処」を1通。理由の言い換えは `lib/macstatus.mjs`。ログは件数だけ。
   - 手元で試すとき：`FIXTURES_DIR=tests/fixtures/macstatus NOW=2026-10-16T07:30:00+09:00 node scripts/digest.mjs`
+- **ソーシャルライフ（2026-10-20〜）**：`threads-social-life`（GitHub Actions）の Threads 7:15/12:15/20:15・X 8:30/13:30/21:30・Instagram 12:05 と、Mac の note 6:10（`com.artlab.sociallife-note-daily`）。ほかのアカウントと同じく、失敗・出ていない枠は毎時の見回りで1通、朝のまとめにも載る。Threads・Instagram の接続期限は `data/token-meta.json`。
+  - note の結果は `report_status.py sociallife-note-daily` が **`threads-social-life` の** `data/mac-status/note-posts.json`・`note-planned.json` に書く（エンパワーの `threads-automation-empower` の note 記録とは混ぜない）。`macStatus` の表示名は「ソーシャルライフ note」。
+  - コメントの見回り（`commentInbox`）は入れていない（全アカウント 10/18 から停止中）。スタッフ用LINEには載らない。
 - **スタッフ用LINE（エンパワーだけ、2026-10-16〜）**：運用者本人用とは**別の LINE 公式アカウント**から、**友だち追加したスタッフ全員**に送る（broadcast。スタッフのユーザーIDは不要）。スタッフは公式アカウントの **QRコードを読んで友だち追加するだけ**。スタッフの役割は「知っておくだけ」で、問題がある行は必ず「→ 代表が対応します」で終わる。
   - **毎朝 8:00**（`staff-digest.yml`）：エンパワーの今日の発信を1通。note・LITALICO は「✅ 投稿済み「タイトル」」（手動で出したものは「投稿済み（手動）」）／止まっていれば理由、Threads は本数と時刻（10/20〜は「0/3（7:55・12:55・20:55 の予定）」、記録から数えるので時刻・本数が変わっても自動で合わせる）、Googleビジネスプロフィールは今日の予約の有無（手で予約しているので、実際に出たかは確かめられない、と明記）。最後に「⚠️ 止まっているもの：〜 → 代表が対応します」（無ければ「止まっているものはありません」）。
   - **毎時の見回り**（`watch.yml`、5:45〜23:45 の毎時）：エンパワーの LITALICO・note が止まった記録、Threads・X の投稿が失敗したときに、1件ずつ「⚠️ エンパワーの【LITALICO】の投稿が止まりました（10/16・ログイン切れ）。代表が対応します。」。運用者本人への通知は今までどおり（別に届く）。
@@ -36,7 +39,7 @@
   - 手元で試すとき：`FIXTURES_DIR=tests/fixtures/staff NOW=2026-10-15T23:00:00Z node scripts/staff-digest.mjs`
 - **時間**：まとめ 7:30 JST（`digest.yml`）／スタッフ向けまとめ 8:00 JST（`staff-digest.yml`）／失敗の見回り 5:45〜23:45 JST の毎時（`watch.yml`）。
 - **鍵**（GitHub Secrets。値はここに置かない）：
-  - `GH_READ_TOKEN`：5つの自動投稿リポジトリを読むだけの鍵（Contents・Actions を Read-only）
+  - `GH_READ_TOKEN`：6つの自動投稿リポジトリ（2026-10-18 に threads-social-life を追加）を読むだけの鍵（Contents・Actions を Read-only）
   - `LINE_CHANNEL_ACCESS_TOKEN`／`LINE_TO`：LINE 公式アカウントから運用者本人へ送るための鍵
   - `INBOX_PRIVATE_KEY`：各リポジトリの暗号化されたコメントを戻すための秘密鍵（公開鍵は各リポジトリの `config/inbox-public.pem`）
   - `GEMINI_API_KEY`：返信案を作る AI の鍵

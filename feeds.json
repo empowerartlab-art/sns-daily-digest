@@ -57,12 +57,27 @@
       "planned": { "path": "data/x-queue.json", "date": "date", "approved": "approved" } },
     { "brand": "ヘタ郎", "media": "Instagram", "time": "6:37", "repo": "threads-hetaro", "workflow": "ig-post.yml",
       "posted": { "path": "data/ig-posts.json", "date": "date" },
-      "planned": { "path": "data/ig-queue.json", "date": "date", "approved": "approved" } }
+      "planned": { "path": "data/ig-queue.json", "date": "date", "approved": "approved" } },
+    { "brand": "ソーシャルライフ", "media": "Threads", "time": "7:15", "repo": "threads-social-life", "workflow": "daily-post.yml",
+      "slotsFrom": "2026-10-20", "slots": [{ "slot": "morning", "time": "7:15" }, { "slot": "noon", "time": "12:15" }, { "slot": "night", "time": "20:15" }],
+      "posted": { "path": "data/threads-posts.json", "date": "date" },
+      "planned": { "path": "data/draft-bank.json", "date": "date", "approved": "approved" } },
+    { "brand": "ソーシャルライフ", "media": "X", "time": "8:30", "repo": "threads-social-life", "workflow": "x-post.yml",
+      "slotsFrom": "2026-10-20", "slots": [{ "slot": "morning", "time": "8:30" }, { "slot": "noon", "time": "13:30" }, { "slot": "night", "time": "21:30" }],
+      "posted": { "path": "data/x-posts.json", "date": "date" },
+      "planned": { "path": "data/x-queue.json", "date": "date", "approved": "approved" } },
+    { "brand": "ソーシャルライフ", "media": "Instagram", "time": "12:05", "repo": "threads-social-life", "workflow": "ig-post.yml",
+      "posted": { "path": "data/ig-posts.json", "date": "date" },
+      "planned": { "path": "data/ig-queue.json", "date": "date", "approved": "approved" } },
+    { "brand": "ソーシャルライフ", "media": "note", "time": "6:10", "repo": "threads-social-life", "workflow": "(Mac) com.artlab.sociallife-note-daily",
+      "posted": { "path": "data/mac-status/note-posts.json", "date": "date", "statusIn": ["published", "skipped"] },
+      "planned": { "path": "data/mac-status/note-planned.json", "date": "date", "approved": "approved" } }
   ],
   "macStatus": [
     { "_note": "Mac(launchd)で動く投稿の結果。Mac の ~/projects/mac-status-reporter/report_status.py が実行のたびに書く。毎時の見回りで stopped/error の記録を1件ずつ LINE へ。",
       "label": "LITALICO", "repo": "threads-automation-empower", "path": "data/mac-status/litalico-posts.json" },
-    { "label": "note", "repo": "threads-automation-empower", "path": "data/mac-status/note-posts.json" }
+    { "label": "note", "repo": "threads-automation-empower", "path": "data/mac-status/note-posts.json" },
+    { "label": "ソーシャルライフ note", "repo": "threads-social-life", "path": "data/mac-status/note-posts.json" }
   ],
   "gbp": { "_note": "Googleビジネスプロフィール(手で予約。APIなし)。予約の記録を読んで、朝のまとめに「予約済み〜いつまで」、土日に来週分(火〜月)の確認・承認、予約切れ間近を載せる。毎時の見回りでは知らせない。",
     "brand": "エンパワー", "label": "Googleビジネスプロフィール", "repo": "threads-automation-empower", "path": "data/gbp-schedule.json" },
@@ -76,7 +91,9 @@
     { "label": "ZERO RIDERS Threads", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
     { "label": "ZERO RIDERS Instagram", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "igTokenExpiresAt" },
     { "label": "ヘタ郎 Threads", "repo": "threads-hetaro", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
-    { "label": "ヘタ郎 Instagram", "repo": "threads-hetaro", "path": "data/token-meta.json", "field": "igTokenExpiresAt" }
+    { "label": "ヘタ郎 Instagram", "repo": "threads-hetaro", "path": "data/token-meta.json", "field": "igTokenExpiresAt" },
+    { "label": "ソーシャルライフ Threads", "repo": "threads-social-life", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
+    { "label": "ソーシャルライフ Instagram", "repo": "threads-social-life", "path": "data/token-meta.json", "field": "igTokenExpiresAt" }
   ],
   "commentInbox": [
     { "brand": "ハーレー", "repo": "threads-harley-solo", "path": "data/comment-inbox.enc.json", "tone": "harley" },
