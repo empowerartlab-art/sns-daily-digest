@@ -116,8 +116,8 @@ test('AI の鍵が無いとき: コメントだけ送り、「鍵の登録後に
   assert.match(text, /コメント：私も今日池ポチャ3回でした笑/);
 });
 
-test('口調: 5アカウントすべてあり、ロストボールには確認済みの事実が入る', () => {
-  assert.deepEqual(Object.keys(TONES).sort(), ['empower', 'harley', 'hetaro', 'lostball', 'zero-riders']);
+test('口調: 6アカウントすべてあり、ロストボールには確認済みの事実が入る', () => {
+  assert.deepEqual(Object.keys(TONES).sort(), ['empower', 'harley', 'hetaro', 'lostball', 'social-life', 'zero-riders']);
   const p = buildPrompt({ tone: 'lostball', facts: ['日本のロストボールを再利用して販売する'], payload });
   assert.match(p.system, /確認済みの事実（これ以外は言わない）/);
   assert.match(p.system, /日本のロストボールを再利用して販売する/);
@@ -192,4 +192,11 @@ test('見回り: inbox が空なら何も送らない', async () => {
   const stats = await runCommentAssist({ cfg, gh: fakeGh({}), ...window, privateKeyPem: privateKey, geminiKey: 'k', push: async (t) => sent.push(t), log: () => {} });
   assert.equal(sent.length, 0);
   assert.equal(stats.sent, 0);
+});
+
+test('自動で返信したコメントは「自動で返信しました」と返信文を送り、AI は呼ばない', async () => {
+  const { buildAutoRepliedMessage } = await import('../lib/comments.mjs');
+  const m = buildAutoRepliedMessage({ account: 'ZERO RIDERS', media: 'Threads', postUrl: 'u', username: 'a', commentText: 'c', autoReplied: 'いつでもどうぞ。' });
+  assert.match(m, /【自動で返信しました】ZERO RIDERSのThreads/);
+  assert.match(m, /返信：いつでもどうぞ。/);
 });

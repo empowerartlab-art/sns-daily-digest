@@ -101,7 +101,8 @@
     { "brand": "ヘタ郎", "repo": "threads-hetaro", "path": "data/comment-inbox.enc.json", "tone": "hetaro" },
     { "brand": "ロストボール", "repo": "threads-lostball-empowerartlab", "path": "data/comment-inbox.enc.json", "tone": "lostball",
       "facts": { "path": "data/verified-facts.json" } },
-    { "brand": "エンパワー", "repo": "threads-automation-empower", "path": "data/comment-inbox.enc.json", "tone": "empower" }
+    { "brand": "エンパワー", "repo": "threads-automation-empower", "path": "data/comment-inbox.enc.json", "tone": "empower" },
+    { "brand": "ソーシャルライフ", "repo": "threads-social-life", "path": "data/comment-inbox.enc.json", "tone": "social-life" }
   ],
   "kakeai": [
     { "brand": "ヘタ郎", "repo": "threads-hetaro", "path": "data/kakeai.json",
