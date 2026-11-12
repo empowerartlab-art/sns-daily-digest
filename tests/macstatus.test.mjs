@@ -8,7 +8,7 @@ import { feedStatus, buildDigest } from '../lib/digest.mjs';
 
 const cfg = JSON.parse(readFileSync(new URL('../feeds.json', import.meta.url), 'utf8'));
 const lit = cfg.feeds.find((f) => f.media === 'LITALICO');
-const note = cfg.feeds.find((f) => f.media === 'note');
+const note = cfg.feeds.find((f) => f.brand === 'エンパワー' && f.media === 'note');
 const root = fileURLToPath(new URL('..', import.meta.url));
 const fixtures = fileURLToPath(new URL('./fixtures/macstatus', import.meta.url));
 
@@ -17,7 +17,7 @@ test('feeds.json: LITALICO 6:00 と note がエンパワーの欄にあり、mac
   assert.equal(lit.time, '6:00');
   assert.equal(note.brand, 'エンパワー');
   assert.equal(lit.posted.path, 'data/mac-status/litalico-posts.json');
-  assert.deepEqual(cfg.macStatus.map((m) => m.label), ['LITALICO', 'note', 'ソーシャルライフ note']);
+  assert.deepEqual(cfg.macStatus.map((m) => m.label), ['LITALICO', 'note', 'ソーシャルライフ note', 'ZERO RIDERS note', 'ヘタ郎 note', 'ハーレー note']);
 });
 
 test('feeds.json: ソーシャルライフの note は自分のリポジトリの記録を読み、エンパワーの note-posts.json とは混ぜない', () => {

@@ -29,6 +29,11 @@
 - **ソーシャルライフ（2026-10-20〜）**：`threads-social-life`（GitHub Actions）の Threads 7:15/12:15/20:15・X 8:30/13:30/21:30・Instagram 12:05 と、Mac の note 6:10（`com.artlab.sociallife-note-daily`）。ほかのアカウントと同じく、失敗・出ていない枠は毎時の見回りで1通、朝のまとめにも載る。Threads・Instagram の接続期限は `data/token-meta.json`。
   - note の結果は `report_status.py sociallife-note-daily` が **`threads-social-life` の** `data/mac-status/note-posts.json`・`note-planned.json` に書く（エンパワーの `threads-automation-empower` の note 記録とは混ぜない）。`macStatus` の表示名は「ソーシャルライフ note」。
   - コメントの見回り（`commentInbox`）は入れていない（全アカウント 10/18 から停止中）。スタッフ用LINEには載らない。
+- **ZERO RIDERS・ヘタ郎・ハーレーの note（2026-11-12〜、Mac の毎朝 6:25／6:40／6:55）**：`com.artlab.zero-riders-note-daily`／`hetaro-note-daily`／`harley-note-daily`。結果は `report_status.py <名前>-daily` が、**それぞれのブランドのリポジトリ**（`threads-zero-riders`・`threads-hetaro`・`threads-harley-solo`）の `data/mac-status/note-posts.json`・`note-planned.json` に書く（エンパワーの note とは混ぜない）。
+  - うまく出なかったとき：承認の鍵が合わない・作業が3回失敗などの「止まった・エラー」は毎時の見回りで1件ずつ、動かなかった日（Mac のスリープ・電源）は予定の時刻 + 30分を過ぎた最初の見回りで「⏰ まだ出ていません」を1回。どちらも運用者本人のLINEだけ。朝のまとめには各ブランドの欄に「note 6:25／6:40／6:55」が載り、承認済みの日が3日以内に尽きると【要対応】に出る。
+  - **スタッフ用LINEには載らない**（エンパワーだけ。`staff.alertMedia` はエンパワーの媒体名と一致したものだけを拾う）。
+  - `feeds.json` の `feeds` は、**同じブランドの行を続けて並べる**（朝のまとめの見出しが二重になる。`tests/brand-notes.test.mjs` が見張っている）。
+  - 手元で試すとき：`FIXTURES_DIR=tests/fixtures/brand-notes NOW=2026-11-12T22:45:00Z SINCE=2026-11-12T21:45:00Z node scripts/watch.mjs`（ZERO＝エラー・ヘタ郎＝停止・ハーレー＝動かなかった、の3パターン。鍵が無いので送信せずログに出すだけ）
 - **スタッフ用LINE（エンパワーだけ、2026-10-16〜）**：運用者本人用とは**別の LINE 公式アカウント**から、**友だち追加したスタッフ全員**に送る（broadcast。スタッフのユーザーIDは不要）。スタッフは公式アカウントの **QRコードを読んで友だち追加するだけ**。スタッフの役割は「知っておくだけ」で、問題がある行は必ず「→ 代表が対応します」で終わる。
   - **毎朝 8:00**（`staff-digest.yml`）：エンパワーの今日の発信を1通。note・LITALICO は「✅ 投稿済み「タイトル」」（手動で出したものは「投稿済み（手動）」）／止まっていれば理由、Threads は本数と時刻（10/20〜は「0/3（7:55・12:55・20:55 の予定）」、記録から数えるので時刻・本数が変わっても自動で合わせる）、Googleビジネスプロフィールは今日の予約の有無（手で予約しているので、実際に出たかは確かめられない、と明記）。最後に「⚠️ 止まっているもの：〜 → 代表が対応します」（無ければ「止まっているものはありません」）。
   - **毎時の見回り**（`watch.yml`、5:45〜23:45 の毎時）：エンパワーの LITALICO・note が止まった記録、Threads・X の投稿が失敗したときに、1件ずつ「⚠️ エンパワーの【LITALICO】の投稿が止まりました（10/16・ログイン切れ）。代表が対応します。」。運用者本人への通知は今までどおり（別に届く）。
