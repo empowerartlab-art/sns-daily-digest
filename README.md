@@ -31,6 +31,7 @@
   - コメントの見回り（`commentInbox`）は入れていない（全アカウント 10/18 から停止中）。スタッフ用LINEには載らない。
 - **ZERO RIDERS・ヘタ郎・ハーレーの note（2026-11-12〜、Mac の毎朝 6:25／6:40／6:55）**：`com.artlab.zero-riders-note-daily`／`hetaro-note-daily`／`harley-note-daily`。結果は `report_status.py <名前>-daily` が、**それぞれのブランドのリポジトリ**（`threads-zero-riders`・`threads-hetaro`・`threads-harley-solo`）の `data/mac-status/note-posts.json`・`note-planned.json` に書く（エンパワーの note とは混ぜない）。
   - うまく出なかったとき：承認の鍵が合わない・作業が3回失敗などの「止まった・エラー」は毎時の見回りで1件ずつ、動かなかった日（Mac のスリープ・電源）は予定の時刻 + 30分を過ぎた最初の見回りで「⏰ まだ出ていません」を1回。どちらも運用者本人のLINEだけ。朝のまとめには各ブランドの欄に「note 6:25／6:40／6:55」が載り、承認済みの日が3日以内に尽きると【要対応】に出る。
+  - **失敗のときはすぐ**：Mac の `report_status.py` が、止まった・エラーの記録を置いたあと `gh workflow run watch.yml` で見回りを今すぐ1回動かす（GitHub の予定実行は数時間遅れる＝2026-11 時点で見回りは 5〜9 時間おき、朝のまとめも日本時間 10〜13 時ごろに動いているため）。見回りは「前回の見回り以降の記録」を読むので二重には知らせない。動かせなかったときは次の予定の見回りで知らせる。**動かなかった日**の「⏰ まだ出ていません」は Mac から動かせないので、予定の実行を待つ（遅れることがある）。
   - **スタッフ用LINEには載らない**（エンパワーだけ。`staff.alertMedia` はエンパワーの媒体名と一致したものだけを拾う）。
   - `feeds.json` の `feeds` は、**同じブランドの行を続けて並べる**（朝のまとめの見出しが二重になる。`tests/brand-notes.test.mjs` が見張っている）。
   - 手元で試すとき：`FIXTURES_DIR=tests/fixtures/brand-notes NOW=2026-11-12T22:45:00Z SINCE=2026-11-12T21:45:00Z node scripts/watch.mjs`（ZERO＝エラー・ヘタ郎＝停止・ハーレー＝動かなかった、の3パターン。鍵が無いので送信せずログに出すだけ）
