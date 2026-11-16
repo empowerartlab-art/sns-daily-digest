@@ -9,6 +9,7 @@ import { dueKakeai, buildKakeaiMessage, dueReplies, buildReplyMessage } from '..
 import { jstDate } from '../lib/digest.mjs';
 import { runCommentAssist } from '../lib/comments.mjs';
 import { dueMacAlerts, buildMacAlert } from '../lib/macstatus.mjs';
+import { dueBacklogAlert, buildBacklogMessage } from '../lib/backlog.mjs';
 import { broadcastLine, STAFF_NO_TOKEN } from '../lib/line.mjs';
 import { staffMacAlerts, staffRunAlerts } from '../lib/staff.mjs';
 
@@ -91,6 +92,20 @@ for (const source of cfg.kakeai ?? []) {
     console.log(`kakeai ${source.brand}: ${due.length} reminders, ${replies.length} reply reminders`);
   } catch (err) {
     console.log(`kakeai ${source.brand}: 読めませんでした（${err.message}）`);
+  }
+}
+
+// 自動返信の返事待ちがたまったら知らせる（lib/backlog.mjs）。件数だけを読む。ここで何が起きても下の通知は止めない。
+for (const src of cfg.commentInbox ?? []) {
+  try {
+    const state = await gh.readJson(cfg.owner, src.repo, 'data/comment-autoreply.json', null);
+    const alert = dueBacklogAlert(state, { since, now });
+    if (alert) {
+      await pushLine({ text: buildBacklogMessage(src.brand, alert), token: process.env.LINE_CHANNEL_ACCESS_TOKEN, to: process.env.LINE_TO });
+      console.log(`backlog ${src.brand}: ${alert.waiting} waiting, alerted`);
+    }
+  } catch (err) {
+    console.log(`backlog ${src.brand}: 読めませんでした（${String(err?.message ?? err).slice(0, 40)}）`);
   }
 }
 
