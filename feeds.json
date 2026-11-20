@@ -99,13 +99,16 @@
     "alertMedia": ["LITALICO", "note", "Threads", "X"],
     "gbp": { "label": "Google ビジネスプロフィール", "repo": "threads-automation-empower", "path": "data/gbp-schedule.json" } },
   "tokens": [
-    { "label": "ロストボール Instagram", "repo": "threads-lostball-empowerartlab", "path": "data/ig-account.json", "field": "igTokenExpiresAt" },
+    { "label": "ハーレー Threads", "repo": "threads-harley-solo", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
+    { "label": "ロストボール Threads", "repo": "threads-lostball-empowerartlab", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
+    { "label": "ロストボール Instagram", "repo": "threads-lostball-empowerartlab", "path": "data/token-meta.json", "field": "igTokenExpiresAt" },
     { "label": "ZERO RIDERS Threads", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
     { "label": "ZERO RIDERS Instagram", "repo": "threads-zero-riders", "path": "data/token-meta.json", "field": "igTokenExpiresAt" },
     { "label": "ヘタ郎 Threads", "repo": "threads-hetaro", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
     { "label": "ヘタ郎 Instagram", "repo": "threads-hetaro", "path": "data/token-meta.json", "field": "igTokenExpiresAt" },
     { "label": "ソーシャルライフ Threads", "repo": "threads-social-life", "path": "data/token-meta.json", "field": "tokenExpiresAt" },
-    { "label": "ソーシャルライフ Instagram", "repo": "threads-social-life", "path": "data/token-meta.json", "field": "igTokenExpiresAt" }
+    { "label": "ソーシャルライフ Instagram", "repo": "threads-social-life", "path": "data/token-meta.json", "field": "igTokenExpiresAt" },
+    { "label": "エンパワー Threads", "repo": "threads-automation-empower", "path": "data/token-meta.json", "field": "tokenExpiresAt" }
   ],
   "commentInbox": [
     { "brand": "ハーレー", "repo": "threads-harley-solo", "path": "data/comment-inbox.enc.json", "tone": "harley" },
